@@ -39,6 +39,7 @@ router.delete('/:userId',(request, response) => {
 
 
 router.post('/login',(request,response)=> {
+    console.log('express called')
     const {emailId,password} = request.body
     const connection = db.connect()
     const statement = `select * from user where emailId = '${emailId}' and password = '${password}'`
@@ -56,7 +57,8 @@ router.post('/login',(request,response)=> {
             const info = {
                 userName: user['userName'],
                 emailId: user['emailId'],
-                userRole : user['userRole']
+                userRole : user['userRole'],
+                userId : user['userId']
             }
             response.send(utils.createResult(null,info))
         }

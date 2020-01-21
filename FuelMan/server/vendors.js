@@ -7,8 +7,128 @@ const upload = multer({ dest: './vendorImages/'})
 
 const router = express.Router()
 
-router.get('/',(request,response)=> {
 
+router.post('/request/:id',(request,response) => {
+    const {choice} = request.body
+    const {id} = request.params
+
+    console.log(id)
+    console.log(choice)
+
+    const connection = db.connect()
+    const statement = `update BookServices set choice = '${choice}' where id = ${id};`
+    console.log(statement)
+    connection.query(statement,(error,data) =>{
+            connection.end()
+            response.send(utils.createResult(error,data))
+
+    })
+})
+
+router.get('/getVendorName',(request,response) => {
+    const connection = db.connect()
+    const statement = `select * from vendors`
+
+    connection.query(statement,(error,data) => {
+        connection.end()
+        const vendors = []
+        for(let i=0; i<data.length;i++){
+            const vendor = data[i]
+            vendors.push({
+                vendorId : vendor['vendorId'],
+                vendorName : vendor['vendorName'],
+                vendorMobileNo : vendor['vendorMobileNo'],
+                vendorEmailId : vendor['vendorEmailId']       
+            })
+        }
+        console.log(vendors)
+        response.send(utils.createResult(error,vendors))
+    })
+})
+
+router.get('/getServicesName',(request,response) => {
+    const connection = db.connect()
+    const statement = `select * from services`
+
+    connection.query(statement,(error,data) => {
+        connection.end()
+        const services = []
+        for(let i=0; i<data.length;i++){
+            const service = data[i]
+            services.push({
+                serviceId : service['serviceId'],
+                serviceName : service['serviceName'],
+                cost : service['cost']
+            })
+        }
+        response.send(utils.createResult(error,services))
+    })
+})
+
+
+
+router.get('/request',(request,response)=> {
+
+    const connection = db.connect()
+    const statment = `select * from BookServices`
+    connection.query(statment,(error,data) => {
+        connection.end()
+        console.log(data)
+        const bookServices = []
+        
+        for(let index = 0 ;index<data.length; index++){
+                    const bookService = data[index]
+                    bookServices.push({
+                        id : bookService['id'],
+                        userId : bookService['userId'],
+                        vendorId : bookService['vendorId'],
+                        location : bookService['location'],
+                        service : bookService['service'],
+                        mobileNo : bookService['mobileNo'],
+                        userEmailId : bookService['userEmailId'],
+                        vehicleNo : bookService['vehicleNo'],
+                        msg : bookService['msg'],
+                        vehicleType : bookService['vehicleType']
+                    })
+        }
+
+        console.log(bookServices)
+                    response.send(utils.createResult(error,bookServices))
+
+    })
+})
+
+
+// router.get('/request',(request,response) => {
+//     const connection = db.connect()
+    
+//     const statement = `select * from BookServices`
+//     connection.query(statement,(error,data) => {
+//         connection.end()
+//         console.log(data)
+//         const bookServices = []
+//         let bookService = []
+//         for(let index = 0 ;index<data.length; index++){}
+//             bookService = data[index]
+//             bookServices.push({
+//                 id : bookService['id'],
+//                 userId : bookService['userId'],
+//                 vendorId : bookService['vendorId'],
+//                 location : bookService['location'],
+//                 service : bookService['service'],
+//                 mobileNo : bookService['mobileNo'],
+//                 userEmailId : bookService['userEmailId'],
+//                 vehicleNo : bookService['vehicleNo'],
+//                 msg : bookService['msg'],
+//                 vehicleType : bookService['vehicleType']
+//             })
+//             console.log(bookServices)
+//             response.send(utils.createResult(error,bookServices))
+//         }
+//     })
+// })
+router.get('/',(request,response)=> {
+     
     const connection = db.connect()
     const statment = `select * from vendors`
     connection.query(statment,(error,data) => {

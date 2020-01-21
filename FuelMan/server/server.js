@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 const routeUser = require('./user')
 const routeVendors = require('./vendors')
 const routeAdmin = require('./admin')
+const routeBookService = require('./bookService')
 
 const app = express()
 
@@ -19,6 +20,7 @@ app.use(bodyParser.json())
 app.use('/user',routeUser)
 app.use('/admin',routeAdmin)
 app.use('/vendors',routeVendors)
+app.use('/bookService',routeBookService)
 
 app.listen(4000, '0.0.0.0', () => {
     console.log('------------------------------------')
