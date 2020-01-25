@@ -37,9 +37,33 @@ router.delete('/:userId',(request, response) => {
     })
 })
 
+router.post('/updateUser',(request,response) => {
+    const {userId,userName,emailId,mobileNo,password,userRole} = request.body
+    const connection = db.connect()
+
+        if(userRole == 'user')
+        {
+            const statement = `update user set userName = '${userName}', emailId = '${emailId}', mobileNo = '${mobileNo}', password = '${password}' where userId = ${userId}`                
+            connection.query(statement,(error,data) => {
+                connection.end()
+                response.send(utils.createResult(error,data))
+            })
+        }
+        else
+        {
+            const statement = `update user set userName = '${userName}', emailId = '${emailId}', mobileNo = '${mobileNo}', password = '${password}' where userId = ${userId}`
+            connection.query(statement,(error,data)=>{
+             connection.end()
+             response.send(utils.createResult(error,data))
+            }) 
+        }
+         
+})
+
+
 
 router.post('/login',(request,response)=> {
-    console.log('express called')
+    console.log('express login called')
     const {emailId,password} = request.body
     const connection = db.connect()
     const statement = `select * from user where emailId = '${emailId}' and password = '${password}'`

@@ -66,9 +66,38 @@ router.get('/getServicesName',(request,response) => {
 })
 
 
+// router.post('/register',(request,reponse) => {
 
-router.get('/request',(request,response)=> {
+//     const {vendorName,vendorLocation,vendorAddress,vendorImages,vendorRatings,vendorLicNo,vendorEmailId,vendorMobileNo} = request.body
+//     const connection = db.connect()
+//     const userRole = 'vendor'
+//     const statement1 = `select * from user where emailId = '${vendorEmailId}'`
+//     connection.query(statement1,(error,users) => {
 
+//         if(users.length == 0)
+//         {
+//             // const statement = `insert into user(userName, emailId, password, mobileNo, userRole) values ('${vendorName}','${vendorEmailId}','${password}','${vendorMobileNo}','${userRole}')`
+//             const statement2 = `insert into vendors(vendorName, vendorLocation,vendorAddress,vendorImages,vendorRatings,vendorLicNo,vendorEmailId,vendorMobileNo) values ('${vendorName}', '${vendorLocation}','${vendorAddress}','${vendorImages}',${vendorRatings},'${vendorLicNo}','${vendorEmailId}','${vendorMobileNo}')` 
+//             // connection.query(statement,(error,data) => {
+//             //     connection.end()
+//             //     reponse.send(utils.createResult(error,data))
+//             // })
+//             // connection = db.connect()
+//             connection.query(statement2,(error,data) => {
+//                 connection.end()
+//                 response.send(utils.createResult(error,data))
+//             })
+//         }
+//         else{
+//             connection.end()
+//             reponse.send(utils.createResult('email exists. Please use another email.'))
+//         }
+        
+//     })
+// })
+
+router.get('/requestList',(request,response)=> {
+ 
     const connection = db.connect()
     const statment = `select * from BookServices`
     connection.query(statment,(error,data) => {
@@ -87,6 +116,8 @@ router.get('/request',(request,response)=> {
                         mobileNo : bookService['mobileNo'],
                         userEmailId : bookService['userEmailId'],
                         vehicleNo : bookService['vehicleNo'],
+                        choice : bookService['choice'],
+                        cost : bookService['cost'],
                         msg : bookService['msg'],
                         vehicleType : bookService['vehicleType']
                     })
@@ -98,6 +129,71 @@ router.get('/request',(request,response)=> {
     })
 })
 
+
+
+router.get('/request/:vendorId',(request,response)=> {
+    const {vendorId} = request.params
+    const connection = db.connect()
+    const statment = `select * from BookServices where vendorId = ${vendorId}`
+    connection.query(statment,(error,data) => {
+        connection.end()
+        console.log(data)
+        const bookServices = []
+        
+        for(let index = 0 ;index<data.length; index++){
+                    const bookService = data[index]
+                    bookServices.push({
+                        id : bookService['id'],
+                        userId : bookService['userId'],
+                        vendorId : bookService['vendorId'],
+                        location : bookService['location'],
+                        service : bookService['service'],
+                        mobileNo : bookService['mobileNo'],
+                        userEmailId : bookService['userEmailId'],
+                        vehicleNo : bookService['vehicleNo'],
+                        cost : bookService['cost'],
+                        msg : bookService['msg'],
+                        vehicleType : bookService['vehicleType']
+                    })
+        }
+
+        console.log(bookServices)
+                    response.send(utils.createResult(error,bookServices))
+
+    })
+})
+
+router.post('/getVendorName',(request,response) => {
+
+    const {userName} = request.body
+    console.log(userName)
+   const connection = db.connect()
+   const vendors = []
+   const statement = `select * from vendors where vendorName = '${userName}'`
+
+   console.log(statement)
+
+   connection.query(statement,(error,data) => {
+       connection.end()
+       console.log(data)
+
+       for(let index= 0 ; index<data.length; index++)
+       {
+           const vendor = data[index]
+           vendors.push({
+            vendorId: vendor['vendorId'],
+            vendorName: vendor['vendorName'],
+            vendorLocation: vendor['vendorLocation'],
+            vendorAddress:vendor['vendorAddress'],
+            vendorImages: vendor['vendorImages'],
+            vendorRatings: vendor['vendorRatings'],
+            vendorEmailId: vendor['vendorEmailId'],
+            vendorMobileNo: vendor['vendorMobileNo']
+        })
+       }
+       response.send(utils.createResult(error,data))
+   })
+})
 
 // router.get('/request',(request,response) => {
 //     const connection = db.connect()
